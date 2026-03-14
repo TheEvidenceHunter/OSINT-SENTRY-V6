@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT SENTRY V6.0 | AMEER RASIM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { 
+            --cyan-neon: #00f2ff; 
+            --bg-dark: #010409; 
+            --red-alert: #ff003c;
+        }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: #e6edf3; 
+            font-family: 'Share Tech Mono', monospace; 
+            margin: 0; 
+            overflow: hidden; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .bg-grid { 
+            position: fixed; inset: 0; 
+            background-image: linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px); 
+            background-size: 40px 40px; 
+            z-index: -1; 
+        }
+
+        .app-container { display: flex; flex-direction: column; height: 100vh; padding: 20px; gap: 15px; }
+
+        .title-main { font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900; color: var(--cyan-neon); letter-spacing: 12px; text-align: center; margin: 0; text-shadow: 0 0 15px var(--cyan-neon); }
+        .title-sub { font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900; color: #fff; letter-spacing: 12px; text-align: center; margin: -10px 0 10px 0; }
+
+        .input-zone { display: grid; grid-template-columns: 1fr auto; gap: 10px; border: 1px solid #30363d; padding: 5px; background: rgba(255,255,255,0.02); }
+        .cyber-input { background: transparent; padding: 15px; color: var(--cyan-neon); font-size: 1.2rem; outline: none; text-align: left; direction: ltr; width: 100%; }
+        .btn-execute { background: var(--cyan-neon); color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900; padding: 0 30px; cursor: pointer; transition: 0.3s; }
+        .btn-execute:hover { background: #fff; box-shadow: 0 0 20px var(--cyan-neon); }
+
+        .tools-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .tool-btn { 
+            background: rgba(13, 17, 23, 0.8); 
+            border: 1px solid #30363d; 
+            padding: 15px; 
+            font-size: 0.7rem; 
+            text-align: center; 
+            cursor: pointer; 
+            color: #888;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .tool-btn i { font-size: 1.2rem; margin-bottom: 5px; }
+        .tool-btn:hover { border-color: var(--cyan-neon); color: var(--cyan-neon); background: rgba(0, 242, 255, 0.05); transform: translateY(-2px); }
+
+        /* تعديل التيرمينال ليدعم الشريط المتحرك */
+        .terminal-flex { 
+            flex-grow: 1; 
+            background: rgba(0, 0, 0, 0.95); 
+            border: 1px solid var(--cyan-neon); 
+            padding: 20px; 
+            overflow-y: auto; 
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.1);
+        }
+
+        /* تنسيق الشريط الجانبي (Scrollbar) */
+        .terminal-flex::-webkit-scrollbar { width: 6px; }
+        .terminal-flex::-webkit-scrollbar-track { background: #010409; }
+        .terminal-flex::-webkit-scrollbar-thumb { background: var(--cyan-neon); border-radius: 3px; }
+
+        .log-text { color: #00ffcc; line-height: 1.8; font-size: 14px; text-align: left; direction: ltr; }
+        .fa-spin-slow { animation: fa-spin 3s infinite linear; }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="app-container">
+        <div class="brand-section">
+            <h1 class="title-main">OSINT SENTRY</h1>
+            <h1 class="title-sub">AMEER RASIM</h1>
+            <p class="text-center text-[10px] tracking-[8px] text-cyan-900">SYSTEM RECONNAISSANCE FRAMEWORK V6.0</p>
+        </div>
+
+        <div class="input-zone">
+            <input id="targetInput" type="text" class="cyber-input" placeholder=">> INSERT TARGET IDENTIFIER...">
+            <button onclick="execute()" class="btn-execute">
+                <i class="fas fa-terminal mr-2"></i> RUN SCAN
+            </button>
+        </div>
+
+        <div class="tools-grid">
+            <div class="tool-btn" onclick="execute()"><i class="fas fa-map-marker-alt"></i>LOCATE_IP</div>
+            <div class="tool-btn" onclick="execute()"><i class="fas fa-share-nodes"></i>SOCIAL_MATRIX</div>
+            <div class="tool-btn" onclick="execute()"><i class="fas fa-fingerprint"></i>IDENTITY_MAP</div>
+            <div class="tool-btn" onclick="execute()"><i class="fas fa-satellite-dish"></i>TELEGRAM_TRACKER</div>
+            <div class="tool-btn" onclick="execute()"><i class="fab fa-whatsapp"></i>WHATSAPP_INTEL</div>
+            <div class="tool-btn" onclick="execute()"><i class="fas fa-file-export"></i>SAVE_REPORT</div>
+            <div class="tool-btn" onclick="execute()"><i class="fas fa-phone-volume"></i>PHONE_SEARCH</div>
+            <div class="tool-btn" onclick="execute()"><i class="fas fa-globe"></i>DNS_LOOKUP</div>
+            <div class="tool-btn" onclick="execute()"><i class="fas fa-network-wired"></i>PORT_SCAN</div>
+            <div class="tool-btn" onclick="clearLog()" style="color:var(--red-alert)"><i class="fas fa-trash-can"></i>CLEAR_LOG</div>
+        </div>
+
+        <div class="terminal-flex" id="terminal">
+            <div id="logBox" class="log-text">
+                <i class="fas fa-microchip fa-spin-slow"></i> ...OSINT SENTRY V6.0 INITIALIZED [<<]<br>
+                <i class="fas fa-user-shield"></i> .CURRENT OPERATOR: AMEER RASIM MAHDI [<<]<br>
+                <i class="fas fa-wifi"></i> ...SYSTEM STATUS: READY_FOR_DEEP_SEARCH [<<]<br>
+                ----------------------------------------------------------------------
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addLog(msg) {
+            var box = document.getElementById("logBox");
+            if (box) {
+                // إضافة الأيقونة والنص الجديد
+                box.innerHTML += "<br><i class='fas fa-caret-right'></i> " + msg;
+                
+                // تحريك السكرول للأسفل تلقائياً
+                var term = document.getElementById("terminal");
+                if (term) {
+                    term.scrollTop = term.scrollHeight;
+                }
+            }
+        }
+
+        function clearLog() {
+            var box = document.getElementById("logBox");
+            box.innerHTML = "[>>] TERMINAL CLEARED... SESSION ACTIVE.";
+        }
+
+        function execute() {
+            var input = document.getElementById("targetInput");
+            var val = input ? input.value : "";
+            
+            if(!val) {
+                addLog("<span style='color:#ff003c'>[!] ERROR: PLEASE ENTER A TARGET</span>");
+                return;
+            }
+
+            addLog("<span style='color:white'>ANALYZING: " + val + " [*]</span>");
+
+            fetch("/scan", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ target: val })
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                addLog("<span style='color:var(--cyan-neon)'>" + data.output + "</span>");
+            })
+            .catch(function(err) {
+                addLog("<span style='color:#ff003c'>[!] CONNECTION ERROR: CHECK app.py</span>");
+            });
+        }
+    </script>
+</body>
+</html>
